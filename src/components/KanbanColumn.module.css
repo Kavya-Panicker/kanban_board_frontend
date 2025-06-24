@@ -1,0 +1,45 @@
+.columnContainer {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  padding: 24px 16px 16px 16px;
+  min-width: 320px;
+  max-width: 340px;
+  flex: 1 1 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.2s, transform 0.2s;
+  margin-bottom: 0px;
+}
+
+.columnContainer:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.16);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.columnContainer.todo {
+  --column-gradient: linear-gradient(135deg, #f9fafc 0%, #a1c4fd 100%);
+}
+.columnContainer.inprogress {
+  --column-gradient: linear-gradient(135deg, #fdf6e3 0%, #fbc2eb 100%);
+}
+.columnContainer.done {
+  --column-gradient: linear-gradient(135deg, #e0ffe0 0%, #8fd3f4 100%);
+}
+
+.columnTitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 18px;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+.tasksList {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+} 
