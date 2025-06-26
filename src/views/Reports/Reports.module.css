@@ -1,30 +1,65 @@
 body, .reports {
-  background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%) !important;
+  background: #fff !important;
   min-height: 100vh;
 }
 
 .reports {
-  padding: 32px 0;
+  padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
 }
 
 .header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-  padding: 24px 32px;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .header h1 {
-  color: #1f2937;
-  font-size: 2.5rem;
-  font-weight: 700;
   margin: 0;
+  font-size: 2rem;
+  color: #1f2937;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filterGroup label {
+  font-weight: 500;
+  color: #4b5563;
+  white-space: nowrap;
+}
+
+.filterSelect,
+.periodSelect,
+.dateInput {
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background-color: white;
+  color: #1f2937;
+  font-size: 0.875rem;
+  min-width: 150px;
+}
+
+.dateInput {
+  min-width: 130px;
+}
+
+.dateRangeFilter {
+  display: flex;
+  gap: 1rem;
 }
 
 .periodSelector {
@@ -36,15 +71,6 @@ body, .reports {
 .periodSelector label {
   color: #374151;
   font-weight: 500;
-  font-size: 0.95rem;
-}
-
-.periodSelect {
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: white;
-  color: #374151;
   font-size: 0.95rem;
 }
 

@@ -3,6 +3,14 @@ import styles from './Reports.module.css';
 
 const Reports = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('month');
+  const [filters, setFilters] = useState({
+    projectStatus: '',
+    teamMember: '',
+    dateRange: {
+      start: '',
+      end: ''
+    }
+  });
 
   const projectStats = {
     total: 12,
@@ -35,6 +43,31 @@ const Reports = () => {
     { month: 'Jun', completed: 25, total: 28 }
   ];
 
+  const handleFilterChange = (filterName, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterName]: value
+    }));
+  };
+
+  const handleDateRangeChange = (field, value) => {
+    setFilters(prev => ({
+      ...prev,
+      dateRange: {
+        ...prev.dateRange,
+        [field]: value
+      }
+    }));
+  };
+
+  // Filter data based on selected filters
+  const filteredTeamPerformance = teamPerformance.filter(member => {
+    if (filters.teamMember && member.name.toLowerCase() !== filters.teamMember.toLowerCase()) {
+      return false;
+    }
+    return true;
+  });
+
   const getEfficiencyColor = (efficiency) => {
     if (efficiency >= 90) return '#10b981';
     if (efficiency >= 80) return '#3b82f6';
@@ -46,18 +79,74 @@ const Reports = () => {
     <div className={styles.reports}>
       <div className={styles.header}>
         <h1>Reports & Analytics</h1>
-        <div className={styles.periodSelector}>
-          <label>Period:</label>
-          <select 
-            value={selectedPeriod} 
-            onChange={(e) => setSelectedPeriod(e.target.value)}
-            className={styles.periodSelect}
-          >
-            <option value="week">This Week</option>
-            <option value="month">This Month</option>
-            <option value="quarter">This Quarter</option>
-            <option value="year">This Year</option>
-          </select>
+        <div className={styles.filters}>
+          <div className={styles.filterGroup}>
+            <label>Period:</label>
+            <select 
+              value={selectedPeriod} 
+              onChange={(e) => setSelectedPeriod(e.target.value)}
+              className={styles.periodSelect}
+            >
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+              <option value="quarter">This Quarter</option>
+              <option value="year">This Year</option>
+              <option value="custom">Custom Range</option>
+            </select>
+          </div>
+
+          {selectedPeriod === 'custom' && (
+            <div className={styles.dateRangeFilter}>
+              <div className={styles.filterGroup}>
+                <label>Start Date:</label>
+                <input
+                  type="date"
+                  value={filters.dateRange.start}
+                  onChange={(e) => handleDateRangeChange('start', e.target.value)}
+                  className={styles.dateInput}
+                />
+              </div>
+              <div className={styles.filterGroup}>
+                <label>End Date:</label>
+                <input
+                  type="date"
+                  value={filters.dateRange.end}
+                  onChange={(e) => handleDateRangeChange('end', e.target.value)}
+                  className={styles.dateInput}
+                />
+              </div>
+            </div>
+          )}
+
+          <div className={styles.filterGroup}>
+            <label>Project Status:</label>
+            <select
+              value={filters.projectStatus}
+              onChange={(e) => handleFilterChange('projectStatus', e.target.value)}
+              className={styles.filterSelect}
+            >
+              <option value="">All</option>
+              <option value="completed">Completed</option>
+              <option value="in-progress">In Progress</option>
+              <option value="planning">Planning</option>
+            </select>
+          </div>
+
+          <div className={styles.filterGroup}>
+            <label>Team Member:</label>
+            <select
+              value={filters.teamMember}
+              onChange={(e) => handleFilterChange('teamMember', e.target.value)}
+              className={styles.filterSelect}
+            >
+              <option value="">All</option>
+              {teamPerformance.map(member => (
+                <option key={member.name} value={member.name}>
+                  {member.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
@@ -154,7 +243,7 @@ const Reports = () => {
               <span>Completed</span>
               <span>Efficiency</span>
             </div>
-            {teamPerformance.map((member, index) => (
+            {filteredTeamPerformance.map((member, index) => (
               <div key={index} className={styles.tableRow}>
                 <span className={styles.memberName}>{member.name}</span>
                 <span>{member.tasks}</span>

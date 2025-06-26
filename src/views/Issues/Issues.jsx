@@ -65,6 +65,29 @@ const Issues = () => {
     }
   ]);
 
+  // Add filter states
+  const [filters, setFilters] = useState({
+    type: '',
+    priority: '',
+    status: ''
+  });
+
+  // Filter change handler
+  const handleFilterChange = (filterName, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterName]: value
+    }));
+  };
+
+  // Filter issues based on selected filters
+  const filteredIssues = issues.filter(issue => {
+    const typeMatch = !filters.type || issue.type.toLowerCase() === filters.type;
+    const priorityMatch = !filters.priority || issue.priority.toLowerCase() === filters.priority;
+    const statusMatch = !filters.status || issue.status.toLowerCase().replace(' ', '-') === filters.status;
+    return typeMatch && priorityMatch && statusMatch;
+  });
+
   const getTypeColor = (type) => {
     switch (type) {
       case 'Bug': return '#ef4444';
@@ -106,7 +129,11 @@ const Issues = () => {
       <div className={styles.filters}>
         <div className={styles.filterGroup}>
           <label>Type:</label>
-          <select className={styles.filterSelect}>
+          <select 
+            className={styles.filterSelect}
+            value={filters.type}
+            onChange={(e) => handleFilterChange('type', e.target.value)}
+          >
             <option value="">All</option>
             <option value="bug">Bug</option>
             <option value="feature">Feature</option>
@@ -116,7 +143,11 @@ const Issues = () => {
         
         <div className={styles.filterGroup}>
           <label>Priority:</label>
-          <select className={styles.filterSelect}>
+          <select 
+            className={styles.filterSelect}
+            value={filters.priority}
+            onChange={(e) => handleFilterChange('priority', e.target.value)}
+          >
             <option value="">All</option>
             <option value="critical">Critical</option>
             <option value="high">High</option>
@@ -127,7 +158,11 @@ const Issues = () => {
         
         <div className={styles.filterGroup}>
           <label>Status:</label>
-          <select className={styles.filterSelect}>
+          <select 
+            className={styles.filterSelect}
+            value={filters.status}
+            onChange={(e) => handleFilterChange('status', e.target.value)}
+          >
             <option value="">All</option>
             <option value="open">Open</option>
             <option value="in-progress">In Progress</option>
@@ -137,7 +172,7 @@ const Issues = () => {
       </div>
 
       <div className={styles.issuesList}>
-        {issues.map((issue) => (
+        {filteredIssues.map((issue) => (
           <div key={issue.id} className={styles.issueCard}>
             <div className={styles.issueHeader}>
               <div className={styles.issueTitle}>
