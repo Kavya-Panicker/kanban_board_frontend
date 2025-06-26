@@ -1,3 +1,8 @@
+body, .projects {
+  background: #fff !important;
+  min-height: 100vh;
+}
+
 .projects {
   padding: 2rem;
   max-width: 1200px;

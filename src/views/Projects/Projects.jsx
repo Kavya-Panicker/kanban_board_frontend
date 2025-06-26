@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './Projects.module.css';
 import { useNavigate } from 'react-router-dom';
-import { useProjects } from '../../context/ProjectsContext';
+import useProjects from '../../hooks/useProjects';
 
 const Projects = () => {
-  const { projects } = useProjects();
+  const { projects, loading, error } = useProjects();
   const navigate = useNavigate();
+
+  // Filter state
+  const [statusFilter, setStatusFilter] = useState('');
+  const [priorityFilter, setPriorityFilter] = useState('');
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -25,6 +29,25 @@ const Projects = () => {
     }
   };
 
+  const getStatusDisplay = (status) => {
+    if (status === 'todo') return 'To Do';
+    if (status === 'inprogress') return 'In Progress';
+    if (status === 'done') return 'Done';
+    return status;
+  };
+
+  // Filtering logic
+  const filteredProjects = projects.filter(project => {
+    const status = (project.status || '').toLowerCase();
+    const priority = (project.priority || '').toLowerCase();
+    const statusMatch = !statusFilter || status === statusFilter;
+    const priorityMatch = !priorityFilter || priority === priorityFilter;
+    return statusMatch && priorityMatch;
+  });
+
+  if (loading) return <div className={styles.loading}>Loading...</div>;
+  if (error) return <div className={styles.error}>Error: {error}</div>;
+
   return (
     <div className={styles.projects}>
       <div className={styles.header}>
@@ -38,28 +61,29 @@ const Projects = () => {
       <div className={styles.filters}>
         <div className={styles.filterGroup}>
           <label>Status:</label>
-          <select className={styles.filterSelect}>
+          <select className={styles.filterSelect} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
             <option value="">All</option>
             <option value="todo">To Do</option>
-            <option value="in-progress">In Progress</option>
+            <option value="inprogress">In Progress</option>
             <option value="done">Done</option>
           </select>
         </div>
         
         <div className={styles.filterGroup}>
           <label>Priority:</label>
-          <select className={styles.filterSelect}>
+          <select className={styles.filterSelect} value={priorityFilter} onChange={e => setPriorityFilter(e.target.value)}>
             <option value="">All</option>
             <option value="high">High</option>
             <option value="medium">Medium</option>
             <option value="low">Low</option>
+            <option value="critical">Critical</option>
           </select>
         </div>
       </div>
 
       <div className={styles.projectsGrid}>
-        {projects.map((project) => (
-          <div key={project.id} className={styles.projectCard}>
+        {filteredProjects.map((project) => (
+          <div key={project._id || project.id} className={styles.projectCard}>
             <div className={styles.projectHeader}>
               <h3>{project.name}</h3>
               <div className={styles.projectMeta}>
@@ -67,7 +91,7 @@ const Projects = () => {
                   className={styles.status}
                   style={{ backgroundColor: getStatusColor(project.status) }}
                 >
-                  {project.status}
+                  {getStatusDisplay(project.status)}
                 </span>
                 <span 
                   className={styles.priority}
@@ -113,7 +137,12 @@ const Projects = () => {
             
             <div className={styles.projectActions}>
               <button className={styles.actionButton}>View Details</button>
-              <button className={styles.actionButton}>Edit</button>
+              <button 
+                className={styles.actionButton}
+                onClick={() => navigate(`/edit-project/${project._id || project.id}`)}
+              >
+                Edit
+              </button>
             </div>
           </div>
         ))}

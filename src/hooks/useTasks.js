@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchTasks } from '../utils/api';
+import { getTasks } from '../utils/api';
 
 export default function useTasks() {
   const [tasks, setTasks] = useState([]);
@@ -7,10 +7,10 @@ export default function useTasks() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const getTasks = async () => {
+    const getAllTasks = async () => {
       try {
         setLoading(true);
-        const data = await fetchTasks();
+        const data = await getTasks();
         setTasks(data);
       } catch (err) {
         setError(err.message || 'Failed to fetch tasks');
@@ -18,7 +18,7 @@ export default function useTasks() {
         setLoading(false);
       }
     };
-    getTasks();
+    getAllTasks();
   }, []);
 
   return { tasks, setTasks, loading, error };

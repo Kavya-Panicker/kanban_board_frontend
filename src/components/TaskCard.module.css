@@ -1,62 +1,106 @@
 .taskCard {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  padding: 16px;
-  margin-bottom: 12px;
-  transition: box-shadow 0.2s;
-  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
 }
 
 .taskCard:hover {
-  box-shadow: 0 6px 24px rgba(0,0,0,0.13);
-  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
 .taskTitle {
   font-size: 1.1rem;
   font-weight: 600;
-  margin-bottom: 8px;
   color: #1f2937;
+  margin-bottom: 16px;
 }
 
 .taskDetails {
-  font-size: 0.95rem;
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.taskDetails > div {
+  margin-bottom: 12px;
+}
+
+.taskDetails strong {
   color: #374151;
-  margin-bottom: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  margin-right: 8px;
+  font-weight: 500;
 }
 
 .priority {
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-weight: 600;
-  font-size: 0.95em;
-  margin-left: 4px;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: inline-block;
 }
 
-.priority.high {
-  background: #fee2e2;
-  color: #b91c1c;
-  border: 1px solid #f87171;
+.high {
+  background-color: #FEE2E2;
+  color: #DC2626;
 }
 
-.priority.medium {
-  background: #fef9c3;
-  color: #b45309;
-  border: 1px solid #fbbf24;
+.medium {
+  background-color: #FEF3C7;
+  color: #D97706;
 }
 
-.priority.low {
-  background: #dcfce7;
-  color: #15803d;
-  border: 1px solid #4ade80;
+.low {
+  background-color: #DBEAFE;
+  color: #2563EB;
 }
 
 .mention {
+  margin-top: 12px;
+  font-size: 0.875rem;
+  color: #4B5563;
+  font-style: italic;
+}
+
+/* New styles for team members */
+.teamMembers {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.teamMember {
+  background-color: #F3F4F6;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+.progressBar {
+  background-color: #F3F4F6;
+  height: 8px;
+  border-radius: 4px;
   margin-top: 8px;
-  font-size: 0.95rem;
-  color: #6c63ff;
+  position: relative;
+  overflow: hidden;
+}
+
+.progressFill {
+  background-color: #3B82F6;
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progressText {
+  position: absolute;
+  right: 0;
+  top: -20px;
+  font-size: 0.75rem;
+  color: #6B7280;
 } 

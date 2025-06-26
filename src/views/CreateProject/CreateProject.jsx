@@ -1,23 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './CreateProject.module.css';
 import { useProjects } from '../../context/ProjectsContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { createProject, updateProject, getProjects, deleteProject } from '../../utils/api';
+
+const statusOptions = [
+  { value: 'todo', label: 'To Do' },
+  { value: 'inprogress', label: 'In Progress' },
+  { value: 'done', label: 'Done' },
+];
+
+const priorityOptions = [
+  'Low', 'Medium', 'High', 'Critical'
+];
 
 const CreateProject = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    startDate: '',
     endDate: '',
     priority: 'Medium',
     teamMembers: [],
-    budget: '',
-    client: ''
+    status: 'todo',
+    progress: 0,
   });
-
   const [teamMember, setTeamMember] = useState('');
-  const { addProject } = useProjects();
+  const { addProject, editProject, removeProject } = useProjects();
   const navigate = useNavigate();
+  const { id } = useParams();
+  const isEdit = Boolean(id);
+
+  useEffect(() => {
+    if (isEdit) {
+      // Fetch the project and pre-fill the form
+      getProjects().then(projects => {
+        const project = projects.find(p => p._id === id || p.id === id);
+        if (project) {
+          setFormData({
+            name: project.name || '',
+            description: project.description || '',
+            endDate: project.dueDate || project.end_date || '',
+            priority: project.priority || 'Medium',
+            teamMembers: Array.isArray(project.team) ? project.team : [],
+            status: (project.status || 'todo').toLowerCase(),
+            progress: project.progress || 0,
+          });
+        }
+      });
+    }
+  }, [id, isEdit]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -44,32 +75,52 @@ const CreateProject = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    addProject({
-      name: formData.name,
-      description: formData.description,
-      dueDate: formData.endDate,
-      priority: formData.priority,
-      team: formData.teamMembers,
-      client: formData.client,
-      budget: formData.budget
-    });
-    navigate('/dashboard');
+    try {
+      const payload = {
+        name: formData.name,
+        description: formData.description,
+        status: formData.status,
+        progress: Number(formData.progress),
+        team: formData.teamMembers,
+        dueDate: formData.endDate,
+        priority: formData.priority,
+      };
+      if (isEdit) {
+        await updateProject(id, payload);
+      } else {
+        await createProject(payload);
+      }
+      navigate('/dashboard');
+    } catch (error) {
+      alert('Error saving project: ' + error.message);
+    }
+  };
+
+  // Delete handler
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+      try {
+        await deleteProject(id);
+        navigate('/dashboard');
+      } catch (error) {
+        alert('Error deleting project: ' + error.message);
+      }
+    }
   };
 
   return (
     <div className={styles.createProject}>
       <div className={styles.header}>
-        <h1>Create New Project</h1>
-        <p>Fill in the details below to create a new project</p>
+        <h1>{isEdit ? 'Edit Project' : 'Create New Project'}</h1>
+        <p>Fill in the details below to {isEdit ? 'edit' : 'create'} your project</p>
       </div>
 
       <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.formGrid}>
           <div className={styles.formSection}>
             <h2>Basic Information</h2>
-            
             <div className={styles.formGroup}>
               <label htmlFor="name">Project Name *</label>
               <input
@@ -82,7 +133,6 @@ const CreateProject = () => {
                 required
               />
             </div>
-
             <div className={styles.formGroup}>
               <label htmlFor="description">Description</label>
               <textarea
@@ -94,19 +144,7 @@ const CreateProject = () => {
                 rows="4"
               />
             </div>
-
             <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label htmlFor="startDate">Start Date</label>
-                <input
-                  type="date"
-                  id="startDate"
-                  name="startDate"
-                  value={formData.startDate}
-                  onChange={handleInputChange}
-                />
-              </div>
-
               <div className={styles.formGroup}>
                 <label htmlFor="endDate">End Date</label>
                 <input
@@ -117,12 +155,22 @@ const CreateProject = () => {
                   onChange={handleInputChange}
                 />
               </div>
+              <div className={styles.formGroup}>
+                <label htmlFor="progress">Progress (%)</label>
+                <input
+                  type="number"
+                  id="progress"
+                  name="progress"
+                  min="0"
+                  max="100"
+                  value={formData.progress}
+                  onChange={handleInputChange}
+                />
+              </div>
             </div>
           </div>
-
           <div className={styles.formSection}>
             <h2>Project Details</h2>
-            
             <div className={styles.formGroup}>
               <label htmlFor="priority">Priority</label>
               <select
@@ -131,43 +179,28 @@ const CreateProject = () => {
                 value={formData.priority}
                 onChange={handleInputChange}
               >
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-                <option value="Critical">Critical</option>
+                {priorityOptions.map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
               </select>
             </div>
-
             <div className={styles.formGroup}>
-              <label htmlFor="client">Client</label>
-              <input
-                type="text"
-                id="client"
-                name="client"
-                value={formData.client}
+              <label htmlFor="status">Status</label>
+              <select
+                id="status"
+                name="status"
+                value={formData.status}
                 onChange={handleInputChange}
-                placeholder="Enter client name"
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <label htmlFor="budget">Budget</label>
-              <input
-                type="number"
-                id="budget"
-                name="budget"
-                value={formData.budget}
-                onChange={handleInputChange}
-                placeholder="Enter budget amount"
-                min="0"
-              />
+              >
+                {statusOptions.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
             </div>
           </div>
         </div>
-
         <div className={styles.formSection}>
           <h2>Team Members</h2>
-          
           <div className={styles.teamInput}>
             <input
               type="text"
@@ -184,7 +217,6 @@ const CreateProject = () => {
               Add Member
             </button>
           </div>
-
           {formData.teamMembers.length > 0 && (
             <div className={styles.teamMembers}>
               {formData.teamMembers.map((member, index) => (
@@ -202,13 +234,17 @@ const CreateProject = () => {
             </div>
           )}
         </div>
-
         <div className={styles.formActions}>
-          <button type="button" className={styles.cancelButton}>
+          <button type="button" className={styles.cancelButton} onClick={() => navigate('/dashboard')}>
             Cancel
           </button>
+          {isEdit && (
+            <button type="button" className={styles.deleteButton} onClick={handleDelete} style={{marginRight: 12, background: '#ef4444', color: 'white'}}>
+              Delete Project
+            </button>
+          )}
           <button type="submit" className={styles.submitButton}>
-            Create Project
+            {isEdit ? 'Save Changes' : 'Create Project'}
           </button>
         </div>
       </form>

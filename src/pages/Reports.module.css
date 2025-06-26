@@ -1,7 +1,9 @@
-.reports {
+body, .reports {
+  background: #fff !important;
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
+  min-height: 100vh;
 }
 
 .header {
@@ -47,8 +49,11 @@
   margin-bottom: 40px;
 }
 
+.statCard, .chartCard, .insightCard, .teamTable, .insightsSection, .mainStat, .statBreakdown, .tableHeader, .tableRow {
+  background: #fff !important;
+}
+
 .statCard {
-  background: white;
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -109,7 +114,6 @@
 }
 
 .chartCard {
-  background: white;
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -220,7 +224,6 @@
 }
 
 .insightCard {
-  background: white;
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);

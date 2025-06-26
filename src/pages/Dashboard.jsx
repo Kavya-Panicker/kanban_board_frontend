@@ -1,15 +1,46 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import KanbanBoard from '../components/KanbanBoard';
 import Timeline from '../components/Timeline';
 import Sidebar from '../components/Sidebar';
 import styles from './Dashboard.module.css';
 import projectStyles from '../views/Projects/Projects.module.css';
 import useTasks from '../hooks/useTasks';
-import { useProjects } from '../context/ProjectsContext';
+import useProjects from '../hooks/useProjects';
 
 const Dashboard = () => {
   const { tasks } = useTasks();
-  const { projects } = useProjects();
+  const { projects, loading, error } = useProjects();
+
+  useEffect(() => {
+    console.log('Dashboard - Projects data:', projects);
+    if (projects?.length > 0) {
+      console.log('First project team:', projects[0].team);
+    }
+  }, [projects]);
+
+  if (loading) {
+    return (
+      <div className={styles.dashboard} style={{ background: '#fff' }}>
+        <Sidebar />
+        <div className={styles.header} style={{ background: '#fff' }}>
+          <h1>Dashboard</h1>
+          <p>Loading projects...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.dashboard} style={{ background: '#fff' }}>
+        <Sidebar />
+        <div className={styles.header} style={{ background: '#fff' }}>
+          <h1>Dashboard</h1>
+          <p style={{ color: 'red' }}>Error: {error}</p>
+        </div>
+      </div>
+    );
+  }
 
   // Issues data from Issues page, mapped for Timeline
   const issues = [
@@ -56,13 +87,22 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className={styles.dashboard}>
+    <div className={styles.dashboard} style={{ background: '#fff', minHeight: '100vh' }}>
       <Sidebar />
-      <div className={styles.header}>
+      <div className={styles.header} style={{ background: '#fff' }}>
         <h1>Dashboard</h1>
         <p>Welcome to your task management dashboard</p>
       </div>
-      <KanbanBoard tasks={projects} />
+      {projects && projects.length > 0 ? (
+        <>
+          <KanbanBoard tasks={projects} />
+          {console.log('Rendering KanbanBoard with projects:', projects)}
+        </>
+      ) : (
+        <div style={{ textAlign: 'center', padding: '20px', background: '#fff' }}>
+          No projects found. Create a new project to get started.
+        </div>
+      )}
       <div style={{
         display: 'flex',
         gap: 32,
@@ -75,11 +115,11 @@ const Dashboard = () => {
         justifyContent: 'center',
         alignItems: 'flex-start',
       }}>
-        <div style={{ flex: 1, textAlign: 'center' }}>
+        <div style={{ flex: 1, textAlign: 'center', background: '#fff' }}>
           <h3 style={{ color: '#1f2937', fontWeight: 700, fontSize: '1.2rem', marginBottom: 18 }}>Project Status Overview</h3>
           <Timeline tasks={projects} />
         </div>
-        <div style={{ flex: 1, textAlign: 'center' }}>
+        <div style={{ flex: 1, textAlign: 'center', background: '#fff' }}>
           <h3 style={{ color: '#1f2937', fontWeight: 700, fontSize: '1.2rem', marginBottom: 18 }}>Issue Status Overview</h3>
           <Timeline tasks={issues} />
         </div>

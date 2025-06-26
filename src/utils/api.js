@@ -50,84 +50,98 @@ export const addTask = async (taskData) => {
   }
 };
 
-export const updateTask = async (taskId, taskData) => {
-  try {
-    const formattedTask = {
-      title: taskData.title,
-      description: taskData.description,
-      status: taskData.status,
-      start_date: new Date(taskData.start_date).toISOString().split('T')[0],
-      end_date: new Date(taskData.end_date).toISOString().split('T')[0],
-      assigned_to: taskData.assigned_to
-    };
+// PROJECTS API
+export async function createProject(projectData) {
+  // Ensure dueDate is an ISO string
+  const data = { ...projectData, dueDate: new Date(projectData.dueDate).toISOString() };
+  const response = await fetch('http://localhost:8000/projects', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Failed to create project');
+  return response.json();
+}
 
-    const response = await api.put(`/tasks/${taskId}`, formattedTask);
-    return response.data;
-  } catch (error) {
-    console.error('Error updating task:', error);
-    throw error;
-  }
-};
-
-export const deleteTask = async (taskId) => {
+export async function getProjects() {
   try {
-    const response = await api.delete(`/tasks/${taskId}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error deleting task:', error);
-    throw error;
-  }
-};
-
-// Projects endpoints
-export const fetchProjects = async () => {
-  try {
-    const response = await api.get('/projects');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching projects:', error);
-    throw error;
-  }
-};
-
-export const createProject = async (projectData) => {
-  try {
-    // Format the date to YYYY-MM-DD
-    const formattedData = {
-      ...projectData,
-      dueDate: new Date(projectData.dueDate).toISOString().split('T')[0]
-    };
+    console.log('Fetching projects...');
+    const response = await fetch('http://localhost:8000/projects');
+    console.log('Projects API Response:', response);
     
-    console.log('Sending project data:', formattedData);
-    const response = await api.post('/projects', formattedData);
-    console.log('Project created:', response.data);
-    return response.data;
+    if (!response.ok) {
+      console.error('Failed to fetch projects:', response.status, response.statusText);
+      throw new Error('Failed to fetch projects');
+    }
+    
+    const data = await response.json();
+    console.log('Projects data received:', data);
+    return data;
   } catch (error) {
-    console.error('Error creating project:', error);
+    console.error('Error in getProjects:', error);
     throw error;
   }
-};
+}
 
-export const updateProject = async (projectId, projectData) => {
-  try {
-    const formattedData = {
-      ...projectData,
-      dueDate: new Date(projectData.dueDate).toISOString().split('T')[0]
-    };
-    const response = await api.put(`/projects/${projectId}`, formattedData);
-    return response.data;
-  } catch (error) {
-    console.error('Error updating project:', error);
-    throw error;
-  }
-};
+export async function updateProject(id, projectData) {
+  const data = { ...projectData, dueDate: new Date(projectData.dueDate).toISOString() };
+  const response = await fetch(`http://localhost:8000/projects/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Failed to update project');
+  return response.json();
+}
 
-export const deleteProject = async (projectId) => {
-  try {
-    const response = await api.delete(`/projects/${projectId}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error deleting project:', error);
-    throw error;
-  }
-};
+export async function deleteProject(id) {
+  const response = await fetch(`http://localhost:8000/projects/${id}`, {
+    method: 'DELETE' });
+  if (!response.ok) throw new Error('Failed to delete project');
+  return response.json();
+}
+
+// TASKS API
+export async function createTask(taskData) {
+  // Ensure start_date and end_date are ISO strings
+  const data = {
+    ...taskData,
+    start_date: new Date(taskData.start_date).toISOString(),
+    end_date: new Date(taskData.end_date).toISOString(),
+  };
+  const response = await fetch('http://localhost:8000/tasks', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Failed to create task');
+  return response.json();
+}
+
+export async function getTasks() {
+  const response = await fetch('http://localhost:8000/tasks');
+  if (!response.ok) throw new Error('Failed to fetch tasks');
+  return response.json();
+}
+
+export async function updateTask(id, taskData) {
+  const data = {
+    ...taskData,
+    start_date: new Date(taskData.start_date).toISOString(),
+    end_date: new Date(taskData.end_date).toISOString(),
+  };
+  const response = await fetch(`http://localhost:8000/tasks/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error('Failed to update task');
+  return response.json();
+}
+
+export async function deleteTask(id) {
+  const response = await fetch(`http://localhost:8000/tasks/${id}`, {
+    method: 'DELETE' });
+  if (!response.ok) throw new Error('Failed to delete task');
+  return response.json();
+}

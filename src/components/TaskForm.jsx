@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { addTask } from '../utils/api';
+import { createTask } from '../utils/api';
 import styles from './TaskForm.module.css';
 
 const TaskForm = ({ onTaskAdded }) => {
@@ -17,7 +17,7 @@ const TaskForm = ({ onTaskAdded }) => {
     console.log("📤 Sending this task to backend:", taskData);
 
     try {
-      const res = await addTask(taskData);
+      const res = await createTask(taskData);
       console.log("✅ Task added successfully:", res);
       
       // Reset form
@@ -35,7 +35,7 @@ const TaskForm = ({ onTaskAdded }) => {
         onTaskAdded(res);
       }
     } catch (err) {
-      console.error("❌ Error adding task:", err.response?.data || err.message);
+      console.error("❌ Error adding task:", err.message);
       alert('Failed to add task. Please try again.');
     }
   };

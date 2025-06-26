@@ -15,6 +15,7 @@ function App() {
             <Route path="/projects" element={<Projects />} />
             <Route path="/issues" element={<Issues />} />
             <Route path="/create-project" element={<CreateProject />} />
+            <Route path="/edit-project/:id" element={<CreateProject />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/board" element={<BoardPage />} />
             <Route path="/" element={<Navigate to="/dashboard" replace />} />

@@ -7,8 +7,20 @@ const KanbanColumn = ({ column, tasks }) => {
     <div className={`${styles.columnContainer} ${styles[column.id]}`}>
       <div className={styles.columnTitle}>{column.title}</div>
       <div className={styles.tasksList}>
-        {tasks.map(task => (
-          <TaskCard key={task.id} task={task} />
+        {tasks.map(item => (
+          <TaskCard 
+            key={item._id || item.id} 
+            task={{
+              id: item._id || item.id,
+              title: item.name || item.title,
+              description: item.description,
+              status: item.status,
+              dueDate: item.dueDate || item.end_date,
+              priority: item.priority,
+              progress: item.progress,
+              team: item.team
+            }} 
+          />
         ))}
       </div>
     </div>
