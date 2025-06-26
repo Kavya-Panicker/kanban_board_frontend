@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import { Dashboard, Projects, Issues, CreateProject, Reports, BoardPage } from './pages';
 import { ProjectsProvider } from './context/ProjectsContext';
@@ -7,7 +7,7 @@ import { ProjectsProvider } from './context/ProjectsContext';
 function App() {
   return (
     <ProjectsProvider>
-      <Router>
+      <BrowserRouter basename="/kanban_board_frontend">
         <Sidebar />
         <div style={{ marginLeft: 0, paddingTop: 0 }}>
           <Routes>
@@ -21,7 +21,7 @@ function App() {
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </div>
-      </Router>
+      </BrowserRouter>
     </ProjectsProvider>
   );
 }

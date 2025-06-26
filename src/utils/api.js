@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const API_BASE_URL = 'https://kanban-api-ztcb.onrender.com';
+
 const api = axios.create({
-  baseURL: 'http://localhost:8000',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -54,7 +56,7 @@ export const addTask = async (taskData) => {
 export async function createProject(projectData) {
   // Ensure dueDate is an ISO string
   const data = { ...projectData, dueDate: new Date(projectData.dueDate).toISOString() };
-  const response = await fetch('http://localhost:8000/projects', {
+  const response = await fetch(`${API_BASE_URL}/projects`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -66,7 +68,7 @@ export async function createProject(projectData) {
 export async function getProjects() {
   try {
     console.log('Fetching projects...');
-    const response = await fetch('http://localhost:8000/projects');
+    const response = await fetch(`${API_BASE_URL}/projects`);
     console.log('Projects API Response:', response);
     
     if (!response.ok) {
@@ -85,7 +87,7 @@ export async function getProjects() {
 
 export async function updateProject(id, projectData) {
   const data = { ...projectData, dueDate: new Date(projectData.dueDate).toISOString() };
-  const response = await fetch(`http://localhost:8000/projects/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -95,7 +97,7 @@ export async function updateProject(id, projectData) {
 }
 
 export async function deleteProject(id) {
-  const response = await fetch(`http://localhost:8000/projects/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
     method: 'DELETE' });
   if (!response.ok) throw new Error('Failed to delete project');
   return response.json();
@@ -109,7 +111,7 @@ export async function createTask(taskData) {
     start_date: new Date(taskData.start_date).toISOString(),
     end_date: new Date(taskData.end_date).toISOString(),
   };
-  const response = await fetch('http://localhost:8000/tasks', {
+  const response = await fetch(`${API_BASE_URL}/tasks`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -119,7 +121,7 @@ export async function createTask(taskData) {
 }
 
 export async function getTasks() {
-  const response = await fetch('http://localhost:8000/tasks');
+  const response = await fetch(`${API_BASE_URL}/tasks`);
   if (!response.ok) throw new Error('Failed to fetch tasks');
   return response.json();
 }
@@ -130,7 +132,7 @@ export async function updateTask(id, taskData) {
     start_date: new Date(taskData.start_date).toISOString(),
     end_date: new Date(taskData.end_date).toISOString(),
   };
-  const response = await fetch(`http://localhost:8000/tasks/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -140,7 +142,7 @@ export async function updateTask(id, taskData) {
 }
 
 export async function deleteTask(id) {
-  const response = await fetch(`http://localhost:8000/tasks/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
     method: 'DELETE' });
   if (!response.ok) throw new Error('Failed to delete task');
   return response.json();
